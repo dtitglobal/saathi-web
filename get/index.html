@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'" />
+<title>Get Saathi</title>
+<script>
+  // Smart store link (the share card's QR code points here). Phones go straight to their
+  // store; everything else stays on this page, which offers both stores.
+  (function () {
+    var APP_STORE_URL = 'https://apps.apple.com/app/id6775579041';
+    var PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.dtitglobal.saathi';
+
+    // iPadOS 13+ reports a Mac user agent, so a "Mac" with a touch screen is an iPad.
+    function storeUrlFor(ua, maxTouchPoints) {
+      if (/iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && maxTouchPoints > 1)) return APP_STORE_URL;
+      if (/Android/i.test(ua)) return PLAY_STORE_URL;
+      return null;
+    }
+
+    var url = storeUrlFor(navigator.userAgent || '', navigator.maxTouchPoints || 0);
+    if (url) location.replace(url);
+  })();
+</script>
+<style>
+  :root{
+    --cream:#FFF8F0; --cream-2:#FFF1E0;
+    --maroon:#7B1F1F; --maroon-deep:#5A1414; --maroon-ink:#3B0E0E;
+    --saffron:#FF8C00; --saffron-soft:#FFB24D; --gold:#C4952A; --gold-deep:#9A7220;
+    --display:'Lora', Georgia, 'Times New Roman', serif;
+    --body:'Mukta', system-ui, -apple-system, sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--body); color:var(--maroon-ink); background:var(--cream);
+    line-height:1.65; -webkit-font-smoothing:antialiased;
+    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:40px 20px}
+  main{max-width:420px; width:100%; text-align:center}
+  .brand{font-family:var(--display); font-weight:600; font-size:30px; color:var(--maroon); margin-top:14px}
+  .lede{font-size:17px; color:#6a4b45; margin:10px 0 30px}
+  .stores{display:flex; flex-direction:column; gap:12px}
+  .btn{display:flex; align-items:center; justify-content:center; gap:10px; font-weight:600;
+    padding:14px 22px; border-radius:12px; text-decoration:none; background:var(--maroon); color:var(--cream);
+    box-shadow:0 8px 22px -12px rgba(123,31,31,.9)}
+  .btn:hover{background:var(--maroon-deep)}
+  .btn svg{width:22px; height:22px; flex:none}
+  .btn span{text-align:left}
+  .btn small{display:block; font-size:10.5px; font-weight:400; letter-spacing:.14em; text-transform:uppercase; opacity:.78; line-height:1.1}
+  .btn b{font-family:var(--display); font-weight:600; font-size:17px; line-height:1.1}
+  .home{display:inline-block; margin-top:26px; font-size:15px; color:var(--gold-deep)}
+  .home:hover{color:var(--maroon)}
+</style>
+</head>
+<body>
+<main>
+  <svg viewBox="0 0 120 120" width="72" height="72" aria-hidden="true">
+    <g fill="#FF8C00">
+      <g id="ray"><polygon points="60,10 68,44 52,44"/></g>
+      <use href="#ray" transform="rotate(45 60 60)"/>
+      <use href="#ray" transform="rotate(90 60 60)"/>
+      <use href="#ray" transform="rotate(135 60 60)"/>
+      <use href="#ray" transform="rotate(180 60 60)"/>
+      <use href="#ray" transform="rotate(225 60 60)"/>
+      <use href="#ray" transform="rotate(270 60 60)"/>
+      <use href="#ray" transform="rotate(315 60 60)"/>
+    </g>
+    <circle cx="60" cy="60" r="26" fill="#FFB24D"/>
+    <circle cx="60" cy="60" r="20" fill="#FF8C00"/>
+  </svg>
+  <h1 class="brand">Saathi</h1>
+  <p class="lede">Your daily companion for a life of dharma, in English and हिन्दी.</p>
+  <div class="stores">
+    <a class="btn" href="https://play.google.com/store/apps/details?id=com.dtitglobal.saathi">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.6 2.3 13 12 3.6 21.7c-.4-.2-.6-.6-.6-1.1V3.4c0-.5.2-.9.6-1.1Zm10.8 6.6 2.9 1.7c1 .6 1 2.2 0 2.8l-2.9 1.7L11.4 12l3-3.1ZM4.9 1.7 15 7.6l-2.6 2.6L4.9 1.7Zm0 20.6 7.5-8.5L15 16.4 4.9 22.3Z"/></svg>
+      <span><small>Get it on</small><b>Google Play</b></span>
+    </a>
+    <a class="btn" href="https://apps.apple.com/app/id6775579041">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.6c0-2.4 2-3.6 2.1-3.7-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-1.9-.9-3.2-.8-1.6 0-3.1 1-4 2.4-1.7 3-.4 7.4 1.2 9.8.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.1-.8 1.5 0 1.9.8 3.2.8 1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8 0 0-2.5-1-2.5-3.9ZM14 5.5c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1 .1 2.1-.6 2.8-1.4Z"/></svg>
+      <span><small>Download on the</small><b>App Store</b></span>
+    </a>
+  </div>
+  <a class="home" href="/">Visit saathi.dtitglobal.com</a>
+</main>
+</body>
+</html>

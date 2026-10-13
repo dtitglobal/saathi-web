@@ -32,7 +32,15 @@
       document.documentElement.className = inApp ? 'is-ios is-in-app' : 'is-ios';
     }
 
-    if (url) location.replace(url);
+        if (url === APP_STORE_URL) {
+      // Let the fallback page paint first, so a blocked hand-off still leaves the button on screen.
+      window.addEventListener('load', function () {
+        setTimeout(function () { location.replace(url); }, 300);
+      });
+    } else if (url) {
+      location.replace(url);
+    }
+    
   })();
 </script>
 <style>

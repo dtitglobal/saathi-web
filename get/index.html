@@ -4,43 +4,248 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="robots" content="noindex" />
-<meta name="apple-itunes-app" content="app-id=6775579041" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'" />
 <title>Get Saathi</title>
 <script>
-  // Smart store link (the share card's QR code points here). Phones go straight to their
-  // store; everything else stays on this page, which offers both stores.
+  // Tracked install link (share cards, bios and ads point here). ?c=<code> picks the UTM tags
+  // that ride along to Google Play as the install referrer. Android goes straight to Play;
+  // iPhone and desktop stay here (desktop also gets a QR code of this link).
   (function () {
-    var APP_STORE_URL = 'https://apps.apple.com/app/id6775579041';
-    var PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.dtitglobal.saathi';
+    var PLAY_BASE = 'https://play.google.com/store/apps/details?id=com.dtitglobal.saathi';
+    var GET_URL = 'https://saathi.dtitglobal.com/get/';
+    // Longer prefixes first, so igbio/igst_/igdm_ win over ig_.
+    var PREFIXES = [
+      ['igbio', 'instagram', 'bio'],
+      ['igst_', 'instagram', 'story'],
+      ['igdm_', 'instagram', 'dm'],
+      ['ig_', 'instagram', 'post'],
+      ['ad_', 'meta', 'paid_social'],
+      ['cr_', 'creator', 'collab'],
+      ['wa_', 'whatsapp', 'channel'],
+      ['qr_', 'qr', 'share_card']
+    ];
+    var CODE_RE = /^[a-z0-9_]{1,64}$/;
+    var UTM_RE = /^[A-Za-z0-9_.-]{1,64}$/;
+
+    function param(name) {
+      var m = new RegExp('[?&]' + name + '=([^&#]*)').exec(location.search);
+      if (!m) return null;
+      try { return decodeURIComponent(m[1].replace(/\+/g, ' ')); } catch (e) { return null; }
+    }
+    function utmParam(name) {
+      var v = param(name);
+      return v && UTM_RE.test(v) ? v : null;
+    }
+
+    var rawCode = (param('c') || '').toLowerCase();
+    var hasCode = CODE_RE.test(rawCode);
+    var code = hasCode ? rawCode : 'direct';
+
+    var source = 'web', medium = 'referral';
+    for (var i = 0; i < PREFIXES.length; i++) {
+      if (code.indexOf(PREFIXES[i][0]) === 0) { source = PREFIXES[i][1]; medium = PREFIXES[i][2]; break; }
+    }
+    var utm = { utm_source: utmParam('utm_source'), utm_medium: utmParam('utm_medium'), utm_campaign: utmParam('utm_campaign') };
+    source = utm.utm_source || source;
+    medium = utm.utm_medium || medium;
+    var campaign = utm.utm_campaign || code;
+
+    // Play caps the referrer; with the 64-char limits this stays near 260, but guard anyway.
+    var referrer = encodeURIComponent('utm_source=' + source + '&utm_medium=' + medium + '&utm_campaign=' + campaign);
+    if (referrer.length >= 512) referrer = encodeURIComponent('utm_source=web&utm_medium=referral&utm_campaign=direct');
+    var playUrl = PLAY_BASE + '&referrer=' + referrer;
+
+    // Clean copy of this link for the desktop QR: only the code and any valid UTM overrides.
+    var qrParams = [];
+    if (hasCode) qrParams.push('c=' + code);
+    for (var key in utm) if (utm[key]) qrParams.push(key + '=' + utm[key]);
+    var qrUrl = GET_URL + (qrParams.length ? '?' + qrParams.join('&') : '');
 
     // iPadOS 13+ reports a Mac user agent, so a "Mac" with a touch screen is an iPad.
-    function storeUrlFor(ua, maxTouchPoints) {
-      if (/iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && maxTouchPoints > 1)) return APP_STORE_URL;
-      if (/Android/i.test(ua)) return PLAY_STORE_URL;
-      return null;
-    }
-
     var ua = navigator.userAgent || '';
-    var url = storeUrlFor(ua, navigator.maxTouchPoints || 0);
+    var isIOS = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && (navigator.maxTouchPoints || 0) > 1);
+    var isAndroid = !isIOS && /Android/i.test(ua);
+    var isDesktop = !isIOS && !isAndroid && !/Mobi|Tablet/i.test(ua);
+    document.documentElement.className = isAndroid ? 'is-android' : isDesktop ? 'is-desktop' : 'is-other';
 
-    // iOS only honours the App Store hand-off when it comes from a tap, so the redirect below
-    // often does nothing there. Mark the page so it renders as a single "Open in the App Store"
-    // button; in-app browsers also get a hint, since some of them block the hand-off entirely.
-    if (url === APP_STORE_URL) {
-      var inApp = /Instagram|FBAN|FBAV|WhatsApp|Line\/|LinkedInApp/.test(ua);
-      document.documentElement.className = inApp ? 'is-ios is-in-app' : 'is-ios';
+    if (isAndroid) location.replace(playUrl);
+
+    document.addEventListener('DOMContentLoaded', function () {
+      document.getElementById('play').href = playUrl;
+      if (!isDesktop) return;
+      var svg = qrSvg(qrUrl) || qrSvg(hasCode ? GET_URL + '?c=' + code : GET_URL);
+      var box = document.getElementById('qr');
+      if (svg) box.insertBefore(svg, box.firstChild);
+    });
+
+    // Minimal QR encoder: byte mode, error correction level M, versions 1-15, drawn as inline SVG.
+    function qrSvg(text) {
+      var m = qrMatrix(text);
+      if (!m) return null;
+      var n = m.length, q = 4, d = '';
+      for (var y = 0; y < n; y++) for (var x = 0; x < n; x++) if (m[y][x]) d += 'M' + (x + q) + ' ' + (y + q) + 'h1v1h-1z';
+      var ns = 'http://www.w3.org/2000/svg';
+      var svg = document.createElementNS(ns, 'svg');
+      svg.setAttribute('viewBox', '0 0 ' + (n + 2 * q) + ' ' + (n + 2 * q));
+      svg.setAttribute('shape-rendering', 'crispEdges');
+      svg.setAttribute('role', 'img');
+      svg.setAttribute('aria-label', 'QR code to get Saathi on Android');
+      var bg = document.createElementNS(ns, 'rect');
+      bg.setAttribute('width', '100%'); bg.setAttribute('height', '100%'); bg.setAttribute('fill', '#fff');
+      var path = document.createElementNS(ns, 'path');
+      path.setAttribute('d', d); path.setAttribute('fill', '#3B0E0E');
+      svg.appendChild(bg); svg.appendChild(path);
+      return svg;
     }
 
-        if (url === APP_STORE_URL) {
-      // Let the fallback page paint first, so a blocked hand-off still leaves the button on screen.
-      window.addEventListener('load', function () {
-        setTimeout(function () { location.replace(url); }, 300);
+    function qrMatrix(text) {
+      var ECC = [0, 10, 16, 26, 18, 24, 16, 18, 22, 22, 26, 30, 22, 22, 24, 24];
+      var BLOCKS = [0, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5, 5, 8, 9, 9, 10];
+      var bytes = [], s = unescape(encodeURIComponent(text));
+      for (var i = 0; i < s.length; i++) bytes.push(s.charCodeAt(i));
+
+      function rawModules(v) {
+        var r = (16 * v + 128) * v + 64;
+        if (v >= 2) { var a = Math.floor(v / 7) + 2; r -= (25 * a - 10) * a - 55; if (v >= 7) r -= 36; }
+        return r;
+      }
+      var ver = 0, dataCw = 0;
+      for (var v = 1; v <= 15; v++) {
+        dataCw = Math.floor(rawModules(v) / 8) - ECC[v] * BLOCKS[v];
+        if (4 + (v < 10 ? 8 : 16) + 8 * bytes.length <= dataCw * 8) { ver = v; break; }
+      }
+      if (!ver) return null;
+
+      // Data bits: mode, length, payload, terminator, padding.
+      var bits = [];
+      function put(val, len) { for (var k = len - 1; k >= 0; k--) bits.push((val >>> k) & 1); }
+      put(4, 4); put(bytes.length, ver < 10 ? 8 : 16);
+      for (i = 0; i < bytes.length; i++) put(bytes[i], 8);
+      put(0, Math.min(4, dataCw * 8 - bits.length));
+      put(0, (8 - bits.length % 8) % 8);
+      for (var pad = 0xEC; bits.length < dataCw * 8; pad ^= 0xEC ^ 0x11) put(pad, 8);
+      var data = [];
+      for (i = 0; i < bits.length; i += 8) { var b = 0; for (var k = 0; k < 8; k++) b = (b << 1) | bits[i + k]; data.push(b); }
+
+      // Reed-Solomon error correction, split into blocks and interleaved.
+      function mul(x, y) { var z = 0; for (var k = 7; k >= 0; k--) { z = (z << 1) ^ ((z >>> 7) * 0x11D); z ^= ((y >>> k) & 1) * x; } return z; }
+      var eccLen = ECC[ver], nBlocks = BLOCKS[ver], rawCw = Math.floor(rawModules(ver) / 8);
+      var div = [];
+      for (i = 0; i < eccLen - 1; i++) div.push(0);
+      div.push(1);
+      for (var root = 1, r = 0; r < eccLen; r++) {
+        for (k = 0; k < div.length; k++) { div[k] = mul(div[k], root); if (k + 1 < div.length) div[k] ^= div[k + 1]; }
+        root = mul(root, 2);
+      }
+      var nShort = nBlocks - rawCw % nBlocks, shortLen = Math.floor(rawCw / nBlocks), blocks = [];
+      for (var bi = 0, pos = 0; bi < nBlocks; bi++) {
+        var dat = data.slice(pos, pos + shortLen - eccLen + (bi < nShort ? 0 : 1));
+        pos += dat.length;
+        var rem = div.map(function () { return 0; });
+        for (k = 0; k < dat.length; k++) {
+          var f = dat[k] ^ rem.shift(); rem.push(0);
+          for (var j = 0; j < div.length; j++) rem[j] ^= mul(div[j], f);
+        }
+        if (bi < nShort) dat.push(0);
+        blocks.push(dat.concat(rem));
+      }
+      var cw = [];
+      for (i = 0; i < blocks[0].length; i++) for (j = 0; j < nBlocks; j++)
+        if (i !== shortLen - eccLen || j >= nShort) cw.push(blocks[j][i]);
+
+      // Function patterns.
+      var size = ver * 4 + 17, mod = [], fn = [];
+      for (i = 0; i < size; i++) { mod.push([]); fn.push([]); for (j = 0; j < size; j++) { mod[i].push(false); fn[i].push(false); } }
+      function set(x, y, dark) { mod[y][x] = dark; fn[y][x] = true; }
+      for (i = 0; i < size; i++) { set(6, i, i % 2 === 0); set(i, 6, i % 2 === 0); }
+      [[3, 3], [size - 4, 3], [3, size - 4]].forEach(function (c) {
+        for (var dy = -4; dy <= 4; dy++) for (var dx = -4; dx <= 4; dx++) {
+          var dist = Math.max(Math.abs(dx), Math.abs(dy)), xx = c[0] + dx, yy = c[1] + dy;
+          if (xx >= 0 && xx < size && yy >= 0 && yy < size) set(xx, yy, dist !== 2 && dist !== 4);
+        }
       });
-    } else if (url) {
-      location.replace(url);
+      if (ver > 1) {
+        var na = Math.floor(ver / 7) + 2, step = Math.ceil((ver * 4 + 4) / (na * 2 - 2)) * 2, al = [6];
+        for (var p = size - 7; al.length < na; p -= step) al.splice(1, 0, p);
+        for (i = 0; i < na; i++) for (j = 0; j < na; j++) {
+          if ((i === 0 && j === 0) || (i === 0 && j === na - 1) || (i === na - 1 && j === 0)) continue;
+          for (var ay = -2; ay <= 2; ay++) for (var ax = -2; ax <= 2; ax++)
+            set(al[i] + ax, al[j] + ay, Math.max(Math.abs(ax), Math.abs(ay)) !== 1);
+        }
+      }
+      function drawFormat(mask) {
+        var fd = mask, frem = fd; // level M = 00
+        for (var t = 0; t < 10; t++) frem = (frem << 1) ^ ((frem >>> 9) * 0x537);
+        var fb = ((fd << 10) | frem) ^ 0x5412;
+        function bit(t) { return ((fb >>> t) & 1) !== 0; }
+        for (t = 0; t <= 5; t++) set(8, t, bit(t));
+        set(8, 7, bit(6)); set(8, 8, bit(7)); set(7, 8, bit(8));
+        for (t = 9; t < 15; t++) set(14 - t, 8, bit(t));
+        for (t = 0; t < 8; t++) set(size - 1 - t, 8, bit(t));
+        for (t = 8; t < 15; t++) set(8, size - 15 + t, bit(t));
+        set(8, size - 8, true);
+      }
+      drawFormat(0);
+      if (ver >= 7) {
+        var vr = ver;
+        for (i = 0; i < 12; i++) vr = (vr << 1) ^ ((vr >>> 11) * 0x1F25);
+        var vb = (ver << 12) | vr;
+        for (i = 0; i < 18; i++) { var vbit = ((vb >>> i) & 1) !== 0, va = size - 11 + i % 3, vc = Math.floor(i / 3); set(va, vc, vbit); set(vc, va, vbit); }
+      }
+
+      // Codewords in the zigzag order.
+      for (var right = size - 1, n = 0; right >= 1; right -= 2) {
+        if (right === 6) right = 5;
+        for (var vert = 0; vert < size; vert++) for (j = 0; j < 2; j++) {
+          var x = right - j, y = ((right + 1) & 2) === 0 ? size - 1 - vert : vert;
+          if (!fn[y][x] && n < cw.length * 8) { mod[y][x] = ((cw[n >>> 3] >>> (7 - (n & 7))) & 1) !== 0; n++; }
+        }
+      }
+
+      // Try all 8 masks and keep the one with the lowest penalty.
+      var MASKS = [
+        function (x, y) { return (x + y) % 2 === 0; },
+        function (x, y) { return y % 2 === 0; },
+        function (x) { return x % 3 === 0; },
+        function (x, y) { return (x + y) % 3 === 0; },
+        function (x, y) { return (Math.floor(x / 3) + Math.floor(y / 2)) % 2 === 0; },
+        function (x, y) { return x * y % 2 + x * y % 3 === 0; },
+        function (x, y) { return (x * y % 2 + x * y % 3) % 2 === 0; },
+        function (x, y) { return ((x + y) % 2 + x * y % 3) % 2 === 0; }
+      ];
+      function applyMask(mk) {
+        for (var yy = 0; yy < size; yy++) for (var xx = 0; xx < size; xx++)
+          if (!fn[yy][xx] && MASKS[mk](xx, yy)) mod[yy][xx] = !mod[yy][xx];
+      }
+      function penalty() {
+        var score = 0, dark = 0, yy, xx, run;
+        for (yy = 0; yy < size; yy++) {
+          for (run = 1, xx = 1; xx <= size; xx++) {
+            if (xx < size && mod[yy][xx] === mod[yy][xx - 1]) run++;
+            else { if (run >= 5) score += run - 2; run = 1; }
+          }
+          for (run = 1, xx = 1; xx <= size; xx++) {
+            if (xx < size && mod[xx][yy] === mod[xx - 1][yy]) run++;
+            else { if (run >= 5) score += run - 2; run = 1; }
+          }
+        }
+        for (yy = 0; yy < size - 1; yy++) for (xx = 0; xx < size - 1; xx++) {
+          var c0 = mod[yy][xx];
+          if (c0 === mod[yy][xx + 1] && c0 === mod[yy + 1][xx] && c0 === mod[yy + 1][xx + 1]) score += 3;
+        }
+        for (yy = 0; yy < size; yy++) for (xx = 0; xx < size; xx++) if (mod[yy][xx]) dark++;
+        return score + Math.floor(Math.abs(dark * 20 - size * size * 10) / (size * size)) * 10;
+      }
+      var best = 0, bestScore = Infinity;
+      for (var mk = 0; mk < 8; mk++) {
+        applyMask(mk); drawFormat(mk);
+        var sc = penalty();
+        if (sc < bestScore) { best = mk; bestScore = sc; }
+        applyMask(mk);
+      }
+      applyMask(best); drawFormat(best);
+      return mod;
     }
-    
   })();
 </script>
 <style>
@@ -69,13 +274,12 @@
   .btn b{font-family:var(--display); font-weight:600; font-size:17px; line-height:1.1}
   .home{display:inline-block; margin-top:26px; font-size:15px; color:var(--gold-deep)}
   .home:hover{color:var(--maroon)}
-  .label-ios, .hint{display:none}
-  .is-ios .play, .is-ios .label-default{display:none}
-  .is-ios .label-ios{display:block}
-  .is-ios .appstore{padding:18px 22px}
-  .is-ios .appstore svg{width:26px; height:26px}
-  .is-ios .appstore b{font-size:20px}
-  .is-in-app .hint{display:block; font-size:14px; color:#6a4b45}
+  .note{font-size:14px; color:#6a4b45}
+  .is-android .note{display:none}
+  .qr{display:none; margin:14px auto 0}
+  .is-desktop .qr{display:block}
+  .qr svg{display:block; width:184px; height:184px; margin:0 auto; border-radius:12px}
+  .qr p{margin-top:8px}
 </style>
 </head>
 <body>
@@ -97,16 +301,12 @@
   <h1 class="brand">Saathi</h1>
   <p class="lede">Your daily companion for a life of dharma, in English and हिन्दी.</p>
   <div class="stores">
-    <a class="btn play" href="https://play.google.com/store/apps/details?id=com.dtitglobal.saathi">
+    <a class="btn play" id="play" href="https://play.google.com/store/apps/details?id=com.dtitglobal.saathi&amp;referrer=utm_source%3Dweb%26utm_medium%3Dreferral%26utm_campaign%3Ddirect">
       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.6 2.3 13 12 3.6 21.7c-.4-.2-.6-.6-.6-1.1V3.4c0-.5.2-.9.6-1.1Zm10.8 6.6 2.9 1.7c1 .6 1 2.2 0 2.8l-2.9 1.7L11.4 12l3-3.1ZM4.9 1.7 15 7.6l-2.6 2.6L4.9 1.7Zm0 20.6 7.5-8.5L15 16.4 4.9 22.3Z"/></svg>
       <span><small>Get it on</small><b>Google Play</b></span>
     </a>
-    <a class="btn appstore" href="https://apps.apple.com/app/id6775579041">
-      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.6c0-2.4 2-3.6 2.1-3.7-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-1.9-.9-3.2-.8-1.6 0-3.1 1-4 2.4-1.7 3-.4 7.4 1.2 9.8.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.1-.8 1.5 0 1.9.8 3.2.8 1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8 0 0-2.5-1-2.5-3.9ZM14 5.5c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1 .1 2.1-.6 2.8-1.4Z"/></svg>
-      <span class="label-default"><small>Download on the</small><b>App Store</b></span>
-      <span class="label-ios"><b>Open in the App Store</b></span>
-    </a>
-    <p class="hint">Not opening? Tap ··· and choose Open in Safari.</p>
+    <p class="note">Saathi abhi sirf Android par hai.</p>
+    <div class="qr" id="qr"><p class="note">Android phone se scan kijiye</p></div>
   </div>
   <a class="home" href="/">Visit saathi.dtitglobal.com</a>
 </main>

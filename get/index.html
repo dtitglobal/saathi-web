@@ -8,10 +8,12 @@
 <title>Get Saathi</title>
 <script>
   // Tracked install link (share cards, bios and ads point here). ?c=<code> picks the UTM tags
-  // that ride along to Google Play as the install referrer. Android goes straight to Play;
-  // iPhone and desktop stay here (desktop also gets a QR code of this link).
+  // that ride along to Google Play as the install referrer (and to the App Store as ct).
+  // Android goes straight to Play, iPhone/iPad straight to the App Store; desktop stays here
+  // and also gets a QR code of this link.
   (function () {
     var PLAY_BASE = 'https://play.google.com/store/apps/details?id=com.dtitglobal.saathi';
+    var APP_STORE_BASE = 'https://apps.apple.com/app/id6775579041';
     var GET_URL = 'https://saathi.dtitglobal.com/get/';
     // Longer prefixes first, so igbio/igst_/igdm_ win over ig_.
     var PREFIXES = [
@@ -54,6 +56,8 @@
     var referrer = encodeURIComponent('utm_source=' + source + '&utm_medium=' + medium + '&utm_campaign=' + campaign);
     if (referrer.length >= 512) referrer = encodeURIComponent('utm_source=web&utm_medium=referral&utm_campaign=direct');
     var playUrl = PLAY_BASE + '&referrer=' + referrer;
+    // App Store campaign token: same campaign as the Play referrer, capped at Apple's 40 chars.
+    var appStoreUrl = APP_STORE_BASE + '?ct=' + encodeURIComponent(campaign.slice(0, 40));
 
     // Clean copy of this link for the desktop QR: only the code and any valid UTM overrides.
     var qrParams = [];
@@ -68,10 +72,17 @@
     var isDesktop = !isIOS && !isAndroid && !/Mobi|Tablet/i.test(ua);
     document.documentElement.className = isAndroid ? 'is-android' : isDesktop ? 'is-desktop' : 'is-other';
 
+    if (isIOS) {
+      // Let the page paint first, so a stalled App Store hand-off still leaves the button on screen.
+      window.addEventListener('load', function () {
+        setTimeout(function () { location.replace(appStoreUrl); }, 300);
+      });
+    }
     if (isAndroid) location.replace(playUrl);
 
     document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('play').href = playUrl;
+      document.getElementById('appstore').href = appStoreUrl;
       if (!isDesktop) return;
       var svg = qrSvg(qrUrl) || qrSvg(hasCode ? GET_URL + '?c=' + code : GET_URL);
       var box = document.getElementById('qr');
@@ -89,7 +100,7 @@
       svg.setAttribute('viewBox', '0 0 ' + (n + 2 * q) + ' ' + (n + 2 * q));
       svg.setAttribute('shape-rendering', 'crispEdges');
       svg.setAttribute('role', 'img');
-      svg.setAttribute('aria-label', 'QR code to get Saathi on Android');
+      svg.setAttribute('aria-label', 'QR code to get Saathi');
       var bg = document.createElementNS(ns, 'rect');
       bg.setAttribute('width', '100%'); bg.setAttribute('height', '100%'); bg.setAttribute('fill', '#fff');
       var path = document.createElementNS(ns, 'path');
@@ -275,7 +286,7 @@
   .home{display:inline-block; margin-top:26px; font-size:15px; color:var(--gold-deep)}
   .home:hover{color:var(--maroon)}
   .note{font-size:14px; color:#6a4b45}
-  .is-android .note{display:none}
+  .is-android .appstore{display:none}
   .qr{display:none; margin:14px auto 0}
   .is-desktop .qr{display:block}
   .qr svg{display:block; width:184px; height:184px; margin:0 auto; border-radius:12px}
@@ -305,8 +316,11 @@
       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.6 2.3 13 12 3.6 21.7c-.4-.2-.6-.6-.6-1.1V3.4c0-.5.2-.9.6-1.1Zm10.8 6.6 2.9 1.7c1 .6 1 2.2 0 2.8l-2.9 1.7L11.4 12l3-3.1ZM4.9 1.7 15 7.6l-2.6 2.6L4.9 1.7Zm0 20.6 7.5-8.5L15 16.4 4.9 22.3Z"/></svg>
       <span><small>Get it on</small><b>Google Play</b></span>
     </a>
-    <p class="note">Saathi abhi sirf Android par hai.</p>
-    <div class="qr" id="qr"><p class="note">Android phone se scan kijiye</p></div>
+    <a class="btn appstore" id="appstore" href="https://apps.apple.com/app/id6775579041?ct=direct">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.6c0-2.4 2-3.6 2.1-3.7-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-1.9-.9-3.2-.8-1.6 0-3.1 1-4 2.4-1.7 3-.4 7.4 1.2 9.8.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.1-.8 1.5 0 1.9.8 3.2.8 1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8 0 0-2.5-1-2.5-3.9ZM14 5.5c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1 .1 2.1-.6 2.8-1.4Z"/></svg>
+      <span><small>Download on the</small><b>App Store</b></span>
+    </a>
+    <div class="qr" id="qr"><p class="note">Phone se scan kijiye</p></div>
   </div>
   <a class="home" href="/">Visit saathi.dtitglobal.com</a>
 </main>

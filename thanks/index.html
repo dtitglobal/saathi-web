@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex" />
+<meta name="referrer" content="no-referrer" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'unsafe-inline'; img-src 'self' data: https://cdn.shopify.com; connect-src https://api.dtitglobal.com https://staging.dtitglobal.com; base-uri 'none'; form-action 'none'" />
+<title>Thank you | Saathi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&amp;family=Marcellus&amp;family=Mukta:wght@400;600&amp;display=swap" rel="stylesheet" />
+<style>
+  *{box-sizing:border-box}
+  [hidden]{display:none !important}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0; background:#FFF8F0; color:#2C1810; font-family:Lora, Georgia, serif;
+    -webkit-font-smoothing:antialiased; overflow-wrap:break-word}
+  a{color:#9B2C2C}
+  a:hover{color:#7B1F1F}
+  button,textarea{font-family:inherit}
+  textarea::placeholder{color:#A88560}
+  :focus-visible{outline:3px solid #7B1F1F; outline-offset:3px}
+  .ss-card :focus-visible{outline-color:#F2C987}
+
+  .page{min-height:100vh; display:flex; flex-direction:column}
+  .col{width:100%; max-width:480px; margin:0 auto}
+
+  .top{background:#FFFBF4; box-shadow:0 3px 12px rgba(155,96,32,0.08)}
+  .top .col{display:flex; align-items:center; gap:10px; padding:14px 20px}
+  .top img{flex:none; display:block; width:40px; height:40px; box-sizing:border-box; border-radius:20px; border:2px solid #E8C47A; background:#F28C1E}
+  .top span{font-weight:700; font-size:18px; color:#7B1F1F}
+
+  main.col{flex:1; display:flex; flex-direction:column; gap:20px; padding:28px 20px 24px}
+
+  .card{background:#FFFFFF; border-radius:22px; box-shadow:0 3px 14px rgba(155,96,32,0.10); padding:24px 20px;
+    display:flex; flex-direction:column; align-items:center; gap:14px; text-align:center}
+  h1{margin:0; font-weight:700; font-size:22px; line-height:30px; color:#7B1F1F}
+  .lede{margin:0; font-size:15px; line-height:23px; color:#6B4E36}
+  .stars{display:flex; gap:4px; margin-top:4px}
+  .word{margin:0; font-size:13px; line-height:18px; color:#8A6A4C}
+
+  .tp-star{width:52px; height:52px; padding:0; border:0; border-radius:26px; background:transparent; display:flex;
+    align-items:center; justify-content:center; cursor:pointer; transition:transform .15s ease; -webkit-tap-highlight-color:transparent}
+  .tp-star:active{transform:scale(.92)}
+  .tp-star svg{display:block}
+  .tp-star path{fill:none; stroke:#C4952A; stroke-width:1.5; stroke-linejoin:round}
+  .tp-star.on path{fill:#E8B13A}
+
+  .tp-btn{display:flex; align-items:center; justify-content:center; gap:10px; min-height:52px; box-sizing:border-box;
+    padding:0 22px; border:0; border-radius:26px; background:#C05C00; color:#FFFFFF; font-weight:700; font-size:16px;
+    text-decoration:none; box-shadow:0 4px 12px rgba(123,48,0,0.25); cursor:pointer}
+  .tp-btn:hover{color:#FFFFFF; background:#A84F00}
+  .tp-ghost{display:flex; align-items:center; justify-content:center; min-height:48px; box-sizing:border-box; padding:0 20px;
+    border:1.5px solid #7B1F1F; border-radius:24px; background:#FFFFFF; color:#7B1F1F; font-weight:700; font-size:15px;
+    cursor:pointer; text-decoration:none}
+  .tp-ghost:hover{background:#FFF0DC; color:#7B1F1F}
+  .tp-btn[disabled],.tp-ghost[disabled],.ss-cta[disabled]{opacity:.6; cursor:default}
+
+  .branch{display:flex; flex-direction:column}
+  .branch h2{margin:0; font-weight:700; font-size:19px; line-height:27px; color:#2C1810}
+  .branch p{margin:0}
+  #high{gap:14px}
+  #low{gap:12px}
+  .box{display:flex; flex-direction:column}
+  #high .box{gap:8px; margin-top:6px}
+  #low .box{gap:10px}
+  .box textarea{box-sizing:border-box; width:100%; resize:vertical; border:1px solid #F0D9B5; border-radius:16px;
+    background:#FFFFFF; padding:12px 14px; font-size:15px; line-height:22px; color:#2C1810}
+  .hint{font-size:13px; line-height:19px; color:#6B4E36}
+
+  .sent{margin:0; display:flex; align-items:center; gap:10px; background:#FFFFFF; border:1px solid #FFEFD8;
+    border-radius:16px; padding:12px 14px; font-size:15px; line-height:22px}
+  .sent svg{flex:none}
+
+  .err{margin:0; font-size:13px; line-height:19px; color:#A01818}
+  .ss-card .err{color:#FFB4A8; text-align:center}
+
+  /* Saathi Store card */
+  .ss-card{position:relative; overflow:hidden; border-radius:24px; margin-top:8px;
+    background:linear-gradient(180deg,#07081A 0%,#0E1030 34%,#1E1C46 60%,#3A2A55 82%,#5A3558 100%);
+    color:#F5F1EA; box-shadow:0 14px 30px rgba(14,16,48,0.35)}
+  .ss-card::after{content:""; position:absolute; left:0; right:0; bottom:0; height:46%;
+    background:radial-gradient(ellipse 80% 60% at 50% 100%,rgba(232,149,90,0.55),transparent 70%); pointer-events:none}
+  .ss-stars{position:absolute; inset:0; pointer-events:none;
+    background-image:radial-gradient(1.2px 1.2px at 24px 30px,rgba(255,255,255,0.9),transparent),radial-gradient(1px 1px at 150px 80px,rgba(255,255,255,0.6),transparent),radial-gradient(1.6px 1.6px at 268px 40px,rgba(255,236,210,0.95),transparent),radial-gradient(1px 1px at 320px 140px,rgba(255,255,255,0.7),transparent),radial-gradient(1.3px 1.3px at 86px 150px,rgba(255,255,255,0.55),transparent),radial-gradient(1.4px 1.4px at 214px 118px,rgba(255,255,255,0.75),transparent);
+    background-size:360px 200px}
+  .ss-in{position:relative; z-index:1; padding:22px 20px; display:flex; flex-direction:column; gap:16px}
+  .ss-head{display:flex; align-items:center; justify-content:space-between; gap:10px}
+  .ss-brand{display:flex; align-items:center; gap:10px}
+  .ss-logo{display:flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:50%;
+    background:#FFFDF7; box-shadow:0 0 0 3px #0E1030, 0 0 0 4px rgba(242,201,135,0.7)}
+  .ss-logo img{display:block; width:32px; height:32px}
+  .ss-name{font-family:Marcellus, Georgia, serif; font-size:19px; letter-spacing:.03em; color:#FBF3E6}
+  .ss-pill{display:inline-flex; align-items:center; min-height:28px; padding:0 12px; border-radius:999px; border:1px solid #F2C987;
+    font-family:Mukta, system-ui, sans-serif; font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:#F2C987; white-space:nowrap}
+
+  /* Bead positions are the design's (362px wide thread), as percentages so all four fit the card. */
+  .ss-thread{position:relative; height:132px; margin:0 -6px}
+  .ss-thread svg{position:absolute; left:0; top:0; width:100%; height:40px}
+  .ss-bead{position:absolute; top:0; display:flex; flex-direction:column; align-items:center; width:76px; margin-left:-38px}
+  .ss-bead:nth-child(2){left:13.26%}
+  .ss-bead:nth-child(3){left:37.57%}
+  .ss-bead:nth-child(4){left:61.88%}
+  .ss-bead:nth-child(5){left:86.19%}
+  .ss-string{display:block; width:1px; background:#C9A24B; height:14px; margin-top:8px}
+  .ss-bead:nth-child(3) .ss-string,.ss-bead:nth-child(4) .ss-string{height:22px; margin-top:18px}
+  .ss-photo{display:block; width:68px; height:68px; border-radius:50%; overflow:hidden; box-sizing:border-box;
+    border:3px solid #F2C987; box-shadow:0 8px 14px -6px rgba(0,0,0,0.6),0 0 0 4px rgba(242,201,135,0.18)}
+  .ss-photo img{display:block; width:100%; height:100%; object-fit:cover}
+  .ss-cap{margin-top:6px; font-family:Mukta, system-ui, sans-serif; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#F0D9A0; white-space:nowrap}
+
+  .ss-copy{display:flex; flex-direction:column; gap:8px}
+  .ss-copy h2{margin:0; font-family:Marcellus, Georgia, serif; font-weight:400; font-size:28px; line-height:1.15; color:#FBF3E6}
+  .ss-copy p{margin:0; font-family:Mukta, system-ui, sans-serif; font-size:16px; line-height:1.6; color:#E6DEEF}
+  .ss-tags{display:flex; flex-wrap:wrap; gap:8px}
+  .ss-tag{display:inline-flex; align-items:center; gap:7px; min-height:30px; padding:0 11px 0 9px; border-radius:999px;
+    border:1px solid rgba(242,201,135,0.45); background:rgba(14,16,48,0.45); font-family:Mukta, system-ui, sans-serif; font-size:13px; color:#F5F1EA}
+  .ss-tag::before{content:""; width:8px; height:8px; border-radius:50%; background:radial-gradient(circle at 35% 30%,#FFF3D0,#E8C36A 45%,#A8742E)}
+
+  .ss-gift{display:flex; align-items:center; gap:14px; padding:14px 16px; border-radius:18px;
+    background:linear-gradient(120deg,#5A1414,#7A2418); box-shadow:inset 0 0 0 1px rgba(242,201,135,0.55)}
+  .ss-gift-icon{flex:none; width:44px; height:44px; border-radius:50%; background:#F2C987; display:flex; align-items:center;
+    justify-content:center; color:#5A1414; box-shadow:0 0 18px 2px rgba(242,201,135,0.4)}
+  .ss-gift-text{display:flex; flex-direction:column; gap:2px}
+  .ss-kicker{font-family:Mukta, system-ui, sans-serif; font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:#F2C987}
+  .ss-gift-line{font-family:Mukta, system-ui, sans-serif; font-size:15px; line-height:1.45; color:#FBF3E6}
+
+  .ss-join{display:flex; flex-direction:column; gap:8px; margin-top:4px}
+  .ss-cta{display:flex; align-items:center; justify-content:center; gap:12px; min-height:56px; border:0; border-radius:28px;
+    background:#F2C987; color:#1C1626; font-family:Mukta, system-ui, sans-serif; font-weight:600; font-size:17px; cursor:pointer;
+    box-shadow:0 0 0 1px #F2C987,0 0 26px 4px rgba(242,201,135,0.35); transition:transform .15s ease}
+  .ss-cta:active{transform:scale(.97)}
+  .ss-cta::before{content:""; width:14px; height:14px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#FFF3D0,#E8C36A 45%,#7A4E18); box-shadow:0 0 0 2px #1C1626}
+  .ss-note{text-align:center; font-family:Mukta, system-ui, sans-serif; font-size:13px; color:#E6DEEF}
+  .ss-joined{margin-top:4px; display:flex; align-items:center; gap:14px; padding:14px 16px; border-radius:18px;
+    border:1px solid #F2C987; background:rgba(14,16,48,0.55)}
+  .ss-joined-dot{flex:none; width:22px; height:22px; border-radius:50%; background:radial-gradient(circle at 35% 30%,#FFF3D0,#E8C36A 45%,#A8742E);
+    box-shadow:0 0 0 4px rgba(242,201,135,0.25), 0 0 18px 2px rgba(242,201,135,0.45)}
+  .ss-joined-text{display:flex; flex-direction:column}
+  .ss-joined-title{font-family:Marcellus, Georgia, serif; font-size:19px; color:#F2C987}
+  .ss-joined-line{font-family:Mukta, system-ui, sans-serif; font-size:14px; color:#E6DEEF}
+
+  footer.col{padding:18px 20px 24px; text-align:center; font-size:12px; line-height:18px; color:#8A6A4C}
+  /* 44px tap area without changing the footer's spacing. */
+  footer a{display:inline-block; padding:13px 8px; margin:-13px 0}
+
+  @media (prefers-reduced-motion:no-preference){
+    .ss-stars{animation:ss-tw 6s ease-in-out infinite alternate}
+    @keyframes ss-tw{from{opacity:.45}to{opacity:1}}
+    .ss-bead{animation:ss-sway 5s ease-in-out infinite alternate; transform-origin:50% 0}
+    .ss-bead:nth-child(2){animation-delay:-1.2s}
+    .ss-bead:nth-child(3){animation-delay:-2.4s}
+    .ss-bead:nth-child(4){animation-delay:-3.6s}
+    @keyframes ss-sway{from{rotate:-2.5deg}to{rotate:2.5deg}}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div class="col">
+      <img src="/brand/saathi-app-logo.png" width="40" height="40" alt="" />
+      <span>Saathi</span>
+    </div>
+  </header>
+
+  <main class="col">
+    <!-- Shown when there is no valid token; the script swaps it for the sections below. -->
+    <section id="plain" class="card" aria-labelledby="plain-h">
+      <h1 id="plain-h">Thanks for using Saathi</h1>
+      <a class="tp-btn" href="https://saathi.dtitglobal.com/get">Get Saathi</a>
+    </section>
+
+    <section id="rate" class="card" aria-labelledby="tp-q" hidden>
+      <h1 id="tp-q">How does Saathi feel so far?</h1>
+      <p class="lede">Tap a star. Your rating comes straight to our small team.</p>
+      <div class="stars" id="stars" role="group" aria-label="Rate Saathi">
+        <button type="button" class="tp-star" data-rating="1" aria-label="1 star" aria-pressed="false"><svg width="38" height="38" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.5l6.1-.7L12 3.2z"/></svg></button>
+        <button type="button" class="tp-star" data-rating="2" aria-label="2 stars" aria-pressed="false"><svg width="38" height="38" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.5l6.1-.7L12 3.2z"/></svg></button>
+        <button type="button" class="tp-star" data-rating="3" aria-label="3 stars" aria-pressed="false"><svg width="38" height="38" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.5l6.1-.7L12 3.2z"/></svg></button>
+        <button type="button" class="tp-star" data-rating="4" aria-label="4 stars" aria-pressed="false"><svg width="38" height="38" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.5l6.1-.7L12 3.2z"/></svg></button>
+        <button type="button" class="tp-star" data-rating="5" aria-label="5 stars" aria-pressed="false"><svg width="38" height="38" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.5l6.1-.7L12 3.2z"/></svg></button>
+      </div>
+      <p class="word" id="word" hidden></p>
+      <p class="err" id="rate-err" role="alert" hidden></p>
+    </section>
+
+    <!-- 4 or 5 stars: public store rating first, then an optional note. -->
+    <section id="high" class="branch" aria-labelledby="tp-high" hidden>
+      <h2 id="tp-high">Thank you, that means a lot.</h2>
+      <p>Would you say the same on <span class="store-name">Google Play</span>? A public rating helps other people find Saathi.</p>
+      <a class="tp-btn store-link" id="store-btn" href="https://saathi.dtitglobal.com/get">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.5l6.1-.7L12 3.2z"/></svg>
+        <span>Rate Saathi on <span class="store-name">Google Play</span></span>
+      </a>
+      <p class="hint" id="store-hint" hidden>Not opening? Tap ··· and choose Open in Safari.</p>
+      <div class="box">
+        <label for="tp-more" style="font-size:14px; line-height:20px; color:#6B4E36">Anything we could do better? (optional)</label>
+        <textarea id="tp-more" rows="3" maxlength="2000" placeholder="A feature you wish it had, or something that felt off"></textarea>
+        <button type="button" class="tp-ghost send">Send</button>
+        <p class="err" role="alert" hidden></p>
+      </div>
+    </section>
+
+    <!-- 1 to 3 stars: the improve box first, the store link small underneath. -->
+    <section id="low" class="branch" aria-labelledby="tp-low" hidden>
+      <h2 id="tp-low">Thank you for being honest.</h2>
+      <div class="box">
+        <label for="tp-improve" style="font-size:15px; line-height:23px">How can we improve Saathi?</label>
+        <textarea id="tp-improve" rows="5" maxlength="2000" placeholder="Tell us what felt off, or what you wish Saathi did"></textarea>
+        <button type="button" class="tp-btn send">Send feedback</button>
+        <p class="err" role="alert" hidden></p>
+      </div>
+      <p style="font-size:14px; line-height:21px; color:#6B4E36">You can also <a class="store-link" href="https://saathi.dtitglobal.com/get">rate Saathi on <span class="store-name">Google Play</span></a>.</p>
+    </section>
+
+    <p class="sent" id="sent" role="status" hidden>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2F7D4F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+      Thank you. Your note reached the team.
+    </p>
+
+    <section id="waitlist" class="ss-card" aria-labelledby="tp-store" hidden>
+      <span class="ss-stars" aria-hidden="true"></span>
+      <div class="ss-in">
+        <div class="ss-head">
+          <span class="ss-brand">
+            <span class="ss-logo"><img src="/brand/saathi-store-logo.svg" width="32" height="32" alt="" /></span>
+            <span class="ss-name">Saathi Store</span>
+          </span>
+          <span class="ss-pill">Opening soon</span>
+        </div>
+
+        <div class="ss-thread" aria-hidden="true">
+          <svg viewBox="0 0 362 40" preserveAspectRatio="none"><path d="M2 6 Q181 40 360 6" fill="none" stroke="#C9A24B" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
+          <span class="ss-bead"><span class="ss-string"></span><span class="ss-photo"><img id="bead-wear" alt="" /></span><span class="ss-cap">Wear</span></span>
+          <span class="ss-bead"><span class="ss-string"></span><span class="ss-photo"><img id="bead-japa" alt="" /></span><span class="ss-cap">Japa</span></span>
+          <span class="ss-bead"><span class="ss-string"></span><span class="ss-photo"><img id="bead-place" alt="" /></span><span class="ss-cap">Place</span></span>
+          <span class="ss-bead"><span class="ss-string"></span><span class="ss-photo"><img id="bead-light" alt="" /></span><span class="ss-cap">Light</span></span>
+        </div>
+
+        <div class="ss-copy">
+          <h2 id="tp-store">Be among the first to step inside</h2>
+          <p>Pieces for your home, mandir and daily practice, chosen with the same care as Saathi, each with its vidhi and the meaning behind it.</p>
+        </div>
+
+        <div class="ss-tags">
+          <span class="ss-tag">Vidhi with every piece</span>
+          <span class="ss-tag">Certified stones</span>
+          <span class="ss-tag">Gift ready packaging</span>
+        </div>
+
+        <div class="ss-gift">
+          <span class="ss-gift-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="8.5" width="17" height="4" rx="1"/><path d="M5 12.5v8h14v-8M12 8.5v12"/><path d="M12 8.5C10.5 5 7 5 7 7c0 1.3 2 1.5 5 1.5zM12 8.5c1.5-3.5 5-3.5 5-1.5 0 1.3-2 1.5-5 1.5z"/></svg>
+          </span>
+          <span class="ss-gift-text">
+            <span class="ss-kicker">Only for the early list</span>
+            <span class="ss-gift-line">An extra discount and a gift from Saathi Store on your first order</span>
+          </span>
+        </div>
+
+        <div class="ss-join" id="join-box">
+          <button type="button" class="ss-cta" id="join">Claim my early list gift</button>
+          <span class="ss-note">One tap. We will email you the morning it opens.</span>
+          <p class="err" id="waitlist-err" role="alert" hidden></p>
+        </div>
+        <div class="ss-joined" id="joined" role="status" hidden>
+          <span class="ss-joined-dot" aria-hidden="true"></span>
+          <span class="ss-joined-text">
+            <span class="ss-joined-title">You are on the list</span>
+            <span class="ss-joined-line">Your extra discount and gift are saved. We will email you the morning Saathi Store opens.</span>
+          </span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="col">
+    Saathi by DT IT Solutions Private Limited<br />
+    <a href="mailto:support@dtitglobal.com">support@dtitglobal.com</a>
+  </footer>
+</div>
+<script>
+  // Follow-up page behind the personal link in our thank-you messages. The token in ?t= is the
+  // only credential, so it is lifted out of the address bar straight away and never logged.
+  (function () {
+    // Saathi Store photos (Shopify CDN), left to right on the gold thread.
+    var STORE_BEADS = {
+      'bead-wear': 'https://cdn.shopify.com/s/files/1/0846/1805/1837/files/ss-seven-chakra-bracelet-image1-hero.jpg?v=1793024871&width=160',
+      'bead-japa': 'https://cdn.shopify.com/s/files/1/0846/1805/1837/files/ss-five-mukhi-rudraksha-mala-image1-hero.jpg?v=1793024710&width=160',
+      'bead-place': 'https://cdn.shopify.com/s/files/1/0846/1805/1837/files/ss-pyrite-shree-yantra-frame-image1-hero.jpg?v=1793024847&width=160',
+      'bead-light': 'https://cdn.shopify.com/s/files/1/0846/1805/1837/files/ss-crystal-tealight-holder-image1-hero.jpg?v=1793024711&width=160'
+    };
+    var RATING_WORDS = ['', 'Not good', 'Could be better', 'Okay', 'Good', 'Loved it'];
+    var TOKEN_RE = /^(s\.)?[A-Za-z0-9_-]{22}$/;
+    var STORAGE_KEY = 'saathi.thanks.t';
+    var ERROR_TEXT = 'Something went wrong, please try again.';
+
+    // Tokens minted by staging carry an "s." prefix.
+    function apiBaseFor(token) {
+      return token.indexOf('s.') === 0 ? 'https://staging.dtitglobal.com' : 'https://api.dtitglobal.com';
+    }
+
+    function $(id) { return document.getElementById(id); }
+    function each(list, fn) { for (var i = 0; i < list.length; i++) fn(list[i]); }
+
+    function readToken() {
+      var fromUrl = null;
+      try { fromUrl = new URLSearchParams(location.search).get('t'); } catch (e) {}
+
+      if (fromUrl === null) {
+        var stored = null;
+        try { stored = sessionStorage.getItem(STORAGE_KEY); } catch (e) {}
+        return stored && TOKEN_RE.test(stored) ? stored : null;
+      }
+
+      var valid = TOKEN_RE.test(fromUrl);
+      if (valid) {
+        try { sessionStorage.setItem(STORAGE_KEY, fromUrl); } catch (e) {}
+      }
+      // Drop ?t= so the link is not passed on by copy-paste or a screenshot.
+      try {
+        var params = new URLSearchParams(location.search);
+        params.delete('t');
+        var rest = params.toString();
+        history.replaceState(null, '', location.pathname + (rest ? '?' + rest : '') + location.hash);
+      } catch (e) {}
+      return valid ? fromUrl : null;
+    }
+
+    var token = readToken();
+    if (!token) return;
+
+    var base = apiBaseFor(token);
+
+    // Resolves only for a { ok: true } reply; every other outcome rejects.
+    function post(path, body, keepalive) {
+      return fetch(base + path, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        keepalive: !!keepalive
+      }).then(function (res) {
+        return res.json();
+      }).then(function (data) {
+        if (!data || data.ok !== true) throw new Error('not ok');
+      });
+    }
+
+    function showError(el) { el.textContent = ERROR_TEXT; el.hidden = false; }
+    function clearError(el) { el.textContent = ''; el.hidden = true; }
+
+    try { post('/t/open', { t: token }, true).catch(function () {}); } catch (e) {}
+
+    // Same platform test as /get/: iPadOS 13+ reports a Mac user agent, so a "Mac" with a touch
+    // screen is an iPad.
+    var ua = navigator.userAgent || '';
+    var isIos = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && (navigator.maxTouchPoints || 0) > 1);
+    var inApp = isIos && /Instagram|FBAN|FBAV|WhatsApp|Line\/|LinkedInApp/.test(ua);
+
+    // The API picks App Store, Play or /get from the user agent; the label follows the same split.
+    var storeUrl = base + '/t/' + encodeURIComponent(token) + '/store';
+    each(document.querySelectorAll('.store-link'), function (a) { a.href = storeUrl; });
+    each(document.querySelectorAll('.store-name'), function (s) {
+      s.textContent = isIos ? 'the App Store' : 'Google Play';
+    });
+    // Some in-app browsers block the App Store hand-off entirely.
+    $('store-hint').hidden = !inApp;
+
+    for (var id in STORE_BEADS) $(id).src = STORE_BEADS[id];
+
+    $('plain').hidden = true;
+    $('rate').hidden = false;
+    $('waitlist').hidden = false;
+
+    // ----- rating -----
+    var stars = $('stars').querySelectorAll('.tp-star');
+    var rateErr = $('rate-err');
+    var ratingSeq = 0;
+
+    function showRating(rating) {
+      each(stars, function (star) {
+        var value = Number(star.getAttribute('data-rating'));
+        star.classList.toggle('on', value <= rating);
+        star.setAttribute('aria-pressed', value === rating ? 'true' : 'false');
+      });
+      $('word').textContent = RATING_WORDS[rating] + ' · tap another star to change it';
+      $('word').hidden = false;
+      $('high').hidden = rating < 4;
+      $('low').hidden = rating >= 4;
+      // A new rating opens the note box again.
+      $('sent').hidden = true;
+      each(document.querySelectorAll('.box'), function (box) { box.hidden = false; });
+    }
+
+    function onStar(rating) {
+      showRating(rating);
+      clearError(rateErr);
+      // Only the latest tap may report a failure, so a slow earlier request cannot flag a newer one.
+      var seq = ++ratingSeq;
+      post('/t/feedback', { t: token, rating: rating }).catch(function () {
+        if (seq === ratingSeq) showError(rateErr);
+      });
+    }
+
+    each(stars, function (star) {
+      star.addEventListener('click', function () {
+        onStar(Number(star.getAttribute('data-rating')));
+      });
+    });
+
+    // ----- improve box (one in each branch, same call) -----
+    each(document.querySelectorAll('.box'), function (box) {
+      var textarea = box.querySelector('textarea');
+      var sendBtn = box.querySelector('.send');
+      var boxErr = box.querySelector('.err');
+      sendBtn.addEventListener('click', function () {
+        var comment = textarea.value.trim();
+        if (!comment) return;
+        clearError(boxErr);
+        sendBtn.disabled = true;
+        post('/t/feedback', { t: token, comment: comment }).then(function () {
+          sendBtn.disabled = false;
+          textarea.value = '';
+          each(document.querySelectorAll('.box'), function (b) { b.hidden = true; });
+          $('sent').hidden = false;
+        }).catch(function () {
+          sendBtn.disabled = false;
+          showError(boxErr);
+        });
+      });
+    });
+
+    // ----- Saathi Store early list -----
+    var joinBtn = $('join');
+    var waitlistErr = $('waitlist-err');
+    joinBtn.addEventListener('click', function () {
+      clearError(waitlistErr);
+      joinBtn.disabled = true;
+      post('/t/waitlist', { t: token }).then(function () {
+        $('join-box').hidden = true;
+        $('joined').hidden = false;
+      }).catch(function () {
+        joinBtn.disabled = false;
+        showError(waitlistErr);
+      });
+    });
+  })();
+</script>
+</body>
+</html>

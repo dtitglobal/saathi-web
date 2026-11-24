@@ -36,20 +36,34 @@
   .card{background:#FFFFFF; border-radius:22px; box-shadow:0 3px 14px rgba(155,96,32,0.10); padding:24px 20px;
     display:flex; flex-direction:column; align-items:center; gap:14px; text-align:center}
   h1{margin:0; font-weight:700; font-size:22px; line-height:30px; color:#7B1F1F}
+  h2{margin:0; font-weight:700; font-size:20px; line-height:28px; color:#7B1F1F}
   .lede{margin:0; font-size:15px; line-height:23px; color:#6B4E36}
-  .stars{display:flex; gap:4px; margin-top:4px}
-  .word{margin:0; font-size:13px; line-height:18px; color:#8A6A4C}
 
-  .tp-star{width:52px; height:52px; padding:0; border:0; border-radius:26px; background:transparent; display:flex;
-    align-items:center; justify-content:center; cursor:pointer; transition:transform .15s ease; -webkit-tap-highlight-color:transparent}
-  .tp-star:active{transform:scale(.92)}
-  .tp-star svg{display:block}
-  .tp-star path{fill:none; stroke:#C4952A; stroke-width:1.5; stroke-linejoin:round}
-  .tp-star.on path{fill:#E8B13A}
+  /* One card at a time. Without reduced motion each step fades in as it is shown. */
+  .step{display:flex; flex-direction:column}
+  @media (prefers-reduced-motion:no-preference){
+    .step{opacity:0; transition:opacity .2s ease}
+    .step.in{opacity:1}
+  }
+
+  /* The 3-dot progress hint. */
+  .dots{display:flex; gap:7px; justify-content:center; margin:0; padding:0}
+  .dots span{display:block; width:7px; height:7px; border-radius:4px; background:#F0D9B5}
+  .dots span.on{background:#C05C00}
+
+  /* Step 1: the four reactions, one row, large tap areas. */
+  .reactions{display:flex; gap:6px; width:100%; margin-top:2px}
+  .react{flex:1 1 0; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+    gap:7px; padding:13px 3px; border:1.5px solid #FFEFD8; border-radius:18px; background:#FFFBF4; cursor:pointer;
+    transition:transform .15s ease, border-color .15s ease; -webkit-tap-highlight-color:transparent}
+  .react:hover{border-color:#E8C47A}
+  .react:active{transform:scale(.95)}
+  .react .emo{font-size:30px; line-height:34px}
+  .react .lbl{font-weight:700; font-size:11px; line-height:14px; color:#6B4E36}
 
   .tp-btn{display:flex; align-items:center; justify-content:center; gap:10px; min-height:52px; box-sizing:border-box;
     padding:0 22px; border:0; border-radius:26px; background:#C05C00; color:#FFFFFF; font-weight:700; font-size:16px;
-    text-decoration:none; box-shadow:0 4px 12px rgba(123,48,0,0.25); cursor:pointer}
+    text-decoration:none; box-shadow:0 4px 12px rgba(123,48,0,0.25); cursor:pointer; text-align:center}
   .tp-btn:hover{color:#FFFFFF; background:#A84F00}
   .tp-ghost{display:flex; align-items:center; justify-content:center; min-height:48px; box-sizing:border-box; padding:0 20px;
     border:1.5px solid #7B1F1F; border-radius:24px; background:#FFFFFF; color:#7B1F1F; font-weight:700; font-size:15px;
@@ -57,27 +71,25 @@
   .tp-ghost:hover{background:#FFF0DC; color:#7B1F1F}
   .tp-btn[disabled],.tp-ghost[disabled],.ss-cta[disabled]{opacity:.6; cursor:default}
 
-  .branch{display:flex; flex-direction:column}
-  .branch h2{margin:0; font-weight:700; font-size:19px; line-height:27px; color:#2C1810}
-  .branch p{margin:0}
-  #high{gap:14px}
-  #low{gap:12px}
-  .box{display:flex; flex-direction:column}
-  #high .box{gap:8px; margin-top:6px}
-  #low .box{gap:10px}
+  /* A quiet text link under a card's main action ("Maybe later", "Skip", "No thanks"). */
+  .tp-small{align-self:center; padding:12px 8px; margin:-4px 0 0; border:0; background:none; color:#9B2C2C;
+    font-weight:600; font-size:14px; line-height:20px; text-decoration:underline; cursor:pointer}
+  .tp-small:hover{color:#7B1F1F}
+
+  .branch{gap:14px}
+  .branch h2,.branch p{margin:0}
+  .box{display:flex; flex-direction:column; gap:10px; width:100%; margin-top:2px; text-align:left}
   .box textarea{box-sizing:border-box; width:100%; resize:vertical; border:1px solid #F0D9B5; border-radius:16px;
     background:#FFFFFF; padding:12px 14px; font-size:15px; line-height:22px; color:#2C1810}
-  .hint{font-size:13px; line-height:19px; color:#6B4E36}
-
-  .sent{margin:0; display:flex; align-items:center; gap:10px; background:#FFFFFF; border:1px solid #FFEFD8;
-    border-radius:16px; padding:12px 14px; font-size:15px; line-height:22px}
-  .sent svg{flex:none}
+  .hint{margin:0; font-size:13px; line-height:19px; color:#6B4E36}
 
   .err{margin:0; font-size:13px; line-height:19px; color:#A01818}
   .ss-card .err{color:#FFB4A8; text-align:center}
+  .retry{padding:0; border:0; background:none; color:#A01818; font-weight:700; font-size:13px;
+    line-height:19px; text-decoration:underline; cursor:pointer}
 
   /* Saathi Store card */
-  .ss-card{position:relative; overflow:hidden; border-radius:24px; margin-top:8px;
+  .ss-card{position:relative; overflow:hidden; border-radius:24px;
     background:linear-gradient(180deg,#07081A 0%,#0E1030 34%,#1E1C46 60%,#3A2A55 82%,#5A3558 100%);
     color:#F5F1EA; box-shadow:0 14px 30px rgba(14,16,48,0.35)}
   .ss-card::after{content:""; position:absolute; left:0; right:0; bottom:0; height:46%;
@@ -134,13 +146,6 @@
   .ss-cta::before{content:""; width:14px; height:14px; border-radius:50%;
     background:radial-gradient(circle at 35% 30%,#FFF3D0,#E8C36A 45%,#7A4E18); box-shadow:0 0 0 2px #1C1626}
   .ss-note{text-align:center; font-family:Mukta, system-ui, sans-serif; font-size:13px; color:#E6DEEF}
-  .ss-joined{margin-top:4px; display:flex; align-items:center; gap:14px; padding:14px 16px; border-radius:18px;
-    border:1px solid #F2C987; background:rgba(14,16,48,0.55)}
-  .ss-joined-dot{flex:none; width:22px; height:22px; border-radius:50%; background:radial-gradient(circle at 35% 30%,#FFF3D0,#E8C36A 45%,#A8742E);
-    box-shadow:0 0 0 4px rgba(242,201,135,0.25), 0 0 18px 2px rgba(242,201,135,0.45)}
-  .ss-joined-text{display:flex; flex-direction:column}
-  .ss-joined-title{font-family:Marcellus, Georgia, serif; font-size:19px; color:#F2C987}
-  .ss-joined-line{font-family:Mukta, system-ui, sans-serif; font-size:14px; color:#E6DEEF}
 
   footer.col{padding:18px 20px 24px; text-align:center; font-size:12px; line-height:18px; color:#8A6A4C}
   /* 44px tap area without changing the footer's spacing. */
@@ -167,113 +172,103 @@
   </header>
 
   <main class="col">
-    <!-- Shown when there is no valid token; the script swaps it for the sections below. -->
+    <!-- Shown when there is no valid token; the script swaps it for the steps below. -->
     <section id="plain" class="card" aria-labelledby="plain-h">
       <h1 id="plain-h">Thanks for using Saathi</h1>
       <a class="tp-btn" href="https://saathi.dtitglobal.com/get">Get Saathi</a>
     </section>
 
-    <section id="rate" class="card" aria-labelledby="tp-q" hidden>
-      <h1 id="tp-q">How does Saathi feel so far?</h1>
-      <p class="lede">Tap a star. Your rating comes straight to our small team.</p>
-      <div class="stars" id="stars" role="group" aria-label="Rate Saathi">
-        <button type="button" class="tp-star" data-rating="1" aria-label="1 star" aria-pressed="false"><svg width="38" height="38" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.5l6.1-.7L12 3.2z"/></svg></button>
-        <button type="button" class="tp-star" data-rating="2" aria-label="2 stars" aria-pressed="false"><svg width="38" height="38" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.5l6.1-.7L12 3.2z"/></svg></button>
-        <button type="button" class="tp-star" data-rating="3" aria-label="3 stars" aria-pressed="false"><svg width="38" height="38" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.5l6.1-.7L12 3.2z"/></svg></button>
-        <button type="button" class="tp-star" data-rating="4" aria-label="4 stars" aria-pressed="false"><svg width="38" height="38" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.5l6.1-.7L12 3.2z"/></svg></button>
-        <button type="button" class="tp-star" data-rating="5" aria-label="5 stars" aria-pressed="false"><svg width="38" height="38" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.5l6.1-.7L12 3.2z"/></svg></button>
-      </div>
-      <p class="word" id="word" hidden></p>
-      <p class="err" id="rate-err" role="alert" hidden></p>
+    <p class="dots" id="dots" aria-hidden="true" hidden><span></span><span></span><span></span></p>
+
+    <!-- Step 1: how Saathi feels so far. The tap saves the rating and moves on. -->
+    <section id="step1" class="step card" aria-labelledby="tp-q" hidden>
+      <h1 id="tp-q"></h1>
+      <div class="reactions" id="reactions" role="group"></div>
     </section>
 
-    <!-- 4 or 5 stars: public store rating first, then an optional note. -->
-    <section id="high" class="branch" aria-labelledby="tp-high" hidden>
-      <h2 id="tp-high">Thank you, that means a lot.</h2>
-      <p>Would you say the same on <span class="store-name">Google Play</span>? A public rating helps other people find Saathi.</p>
-      <a class="tp-btn store-link" id="store-btn" href="https://saathi.dtitglobal.com/get">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.5l6.1-.7L12 3.2z"/></svg>
-        <span>Rate Saathi on <span class="store-name">Google Play</span></span>
-      </a>
-      <p class="hint" id="store-hint" hidden>Not opening? Tap ··· and choose Open in Safari.</p>
+    <!-- Step 2a, a good rating: the public store rating. -->
+    <section id="step2a" class="step card branch" aria-labelledby="tp-high" hidden>
+      <h2 id="tp-high"></h2>
+      <p class="lede" id="high-lede"></p>
+      <div class="box" id="store-buttons"></div>
+      <p class="hint" id="store-hint" hidden></p>
+      <button type="button" class="tp-small" id="store-later"></button>
+      <p class="err rate-err" role="alert" hidden></p>
+      <button type="button" class="retry rate-retry" hidden></button>
+    </section>
+
+    <!-- Step 2b, a lower rating: what we could do better. -->
+    <section id="step2b" class="step card branch" aria-labelledby="tp-low" hidden>
+      <h2 id="tp-low"></h2>
+      <p class="lede" id="low-lede"></p>
       <div class="box">
-        <label for="tp-more" style="font-size:14px; line-height:20px; color:#6B4E36">Anything we could do better? (optional)</label>
-        <textarea id="tp-more" rows="3" maxlength="2000" placeholder="A feature you wish it had, or something that felt off"></textarea>
-        <button type="button" class="tp-ghost send">Send</button>
-        <p class="err" role="alert" hidden></p>
+        <label class="hint" id="improve-label" for="tp-improve"></label>
+        <textarea id="tp-improve" rows="5" maxlength="2000"></textarea>
+        <button type="button" class="tp-btn" id="improve-send"></button>
+        <p class="err" id="improve-err" role="alert" hidden></p>
       </div>
+      <button type="button" class="tp-small" id="improve-skip"></button>
+      <p class="err rate-err" role="alert" hidden></p>
+      <button type="button" class="retry rate-retry" hidden></button>
     </section>
 
-    <!-- 1 to 3 stars: the improve box first, the store link small underneath. -->
-    <section id="low" class="branch" aria-labelledby="tp-low" hidden>
-      <h2 id="tp-low">Thank you for being honest.</h2>
-      <div class="box">
-        <label for="tp-improve" style="font-size:15px; line-height:23px">How can we improve Saathi?</label>
-        <textarea id="tp-improve" rows="5" maxlength="2000" placeholder="Tell us what felt off, or what you wish Saathi did"></textarea>
-        <button type="button" class="tp-btn send">Send feedback</button>
-        <p class="err" role="alert" hidden></p>
+    <!-- Step 3: the Saathi Store early list card, unchanged. -->
+    <section id="step3" class="step" aria-labelledby="tp-store" hidden>
+      <div class="ss-card">
+        <span class="ss-stars" aria-hidden="true"></span>
+        <div class="ss-in">
+          <div class="ss-head">
+            <span class="ss-brand">
+              <span class="ss-logo"><img src="/brand/saathi-store-logo.svg" width="32" height="32" alt="" /></span>
+              <span class="ss-name">Saathi Store</span>
+            </span>
+            <span class="ss-pill">Opening soon</span>
+          </div>
+
+          <div class="ss-thread" aria-hidden="true">
+            <svg viewBox="0 0 362 40" preserveAspectRatio="none"><path d="M2 6 Q181 40 360 6" fill="none" stroke="#C9A24B" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
+            <span class="ss-bead"><span class="ss-string"></span><span class="ss-photo"><img id="bead-wear" alt="" /></span><span class="ss-cap">Wear</span></span>
+            <span class="ss-bead"><span class="ss-string"></span><span class="ss-photo"><img id="bead-japa" alt="" /></span><span class="ss-cap">Japa</span></span>
+            <span class="ss-bead"><span class="ss-string"></span><span class="ss-photo"><img id="bead-place" alt="" /></span><span class="ss-cap">Place</span></span>
+            <span class="ss-bead"><span class="ss-string"></span><span class="ss-photo"><img id="bead-light" alt="" /></span><span class="ss-cap">Light</span></span>
+          </div>
+
+          <div class="ss-copy">
+            <h2 id="tp-store">Be among the first to step inside</h2>
+            <p>Pieces for your home, mandir and daily practice, chosen with the same care as Saathi, each with its vidhi and the meaning behind it.</p>
+          </div>
+
+          <div class="ss-tags">
+            <span class="ss-tag">Vidhi with every piece</span>
+            <span class="ss-tag">Certified stones</span>
+            <span class="ss-tag">Gift ready packaging</span>
+          </div>
+
+          <div class="ss-gift">
+            <span class="ss-gift-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="8.5" width="17" height="4" rx="1"/><path d="M5 12.5v8h14v-8M12 8.5v12"/><path d="M12 8.5C10.5 5 7 5 7 7c0 1.3 2 1.5 5 1.5zM12 8.5c1.5-3.5 5-3.5 5-1.5 0 1.3-2 1.5-5 1.5z"/></svg>
+            </span>
+            <span class="ss-gift-text">
+              <span class="ss-kicker">Only for the early list</span>
+              <span class="ss-gift-line">An extra discount and a gift from Saathi Store on your first order</span>
+            </span>
+          </div>
+
+          <div class="ss-join">
+            <button type="button" class="ss-cta" id="join">Claim my early list gift</button>
+            <span class="ss-note">One tap. We will email you the morning it opens.</span>
+            <p class="err" id="waitlist-err" role="alert" hidden></p>
+          </div>
+        </div>
       </div>
-      <p style="font-size:14px; line-height:21px; color:#6B4E36">You can also <a class="store-link" href="https://saathi.dtitglobal.com/get">rate Saathi on <span class="store-name">Google Play</span></a>.</p>
+      <button type="button" class="tp-small" id="waitlist-no" style="margin-top:12px"></button>
     </section>
 
-    <p class="sent" id="sent" role="status" hidden>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2F7D4F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
-      Thank you. Your note reached the team.
-    </p>
-
-    <section id="waitlist" class="ss-card" aria-labelledby="tp-store" hidden>
-      <span class="ss-stars" aria-hidden="true"></span>
-      <div class="ss-in">
-        <div class="ss-head">
-          <span class="ss-brand">
-            <span class="ss-logo"><img src="/brand/saathi-store-logo.svg" width="32" height="32" alt="" /></span>
-            <span class="ss-name">Saathi Store</span>
-          </span>
-          <span class="ss-pill">Opening soon</span>
-        </div>
-
-        <div class="ss-thread" aria-hidden="true">
-          <svg viewBox="0 0 362 40" preserveAspectRatio="none"><path d="M2 6 Q181 40 360 6" fill="none" stroke="#C9A24B" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
-          <span class="ss-bead"><span class="ss-string"></span><span class="ss-photo"><img id="bead-wear" alt="" /></span><span class="ss-cap">Wear</span></span>
-          <span class="ss-bead"><span class="ss-string"></span><span class="ss-photo"><img id="bead-japa" alt="" /></span><span class="ss-cap">Japa</span></span>
-          <span class="ss-bead"><span class="ss-string"></span><span class="ss-photo"><img id="bead-place" alt="" /></span><span class="ss-cap">Place</span></span>
-          <span class="ss-bead"><span class="ss-string"></span><span class="ss-photo"><img id="bead-light" alt="" /></span><span class="ss-cap">Light</span></span>
-        </div>
-
-        <div class="ss-copy">
-          <h2 id="tp-store">Be among the first to step inside</h2>
-          <p>Pieces for your home, mandir and daily practice, chosen with the same care as Saathi, each with its vidhi and the meaning behind it.</p>
-        </div>
-
-        <div class="ss-tags">
-          <span class="ss-tag">Vidhi with every piece</span>
-          <span class="ss-tag">Certified stones</span>
-          <span class="ss-tag">Gift ready packaging</span>
-        </div>
-
-        <div class="ss-gift">
-          <span class="ss-gift-icon" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="8.5" width="17" height="4" rx="1"/><path d="M5 12.5v8h14v-8M12 8.5v12"/><path d="M12 8.5C10.5 5 7 5 7 7c0 1.3 2 1.5 5 1.5zM12 8.5c1.5-3.5 5-3.5 5-1.5 0 1.3-2 1.5-5 1.5z"/></svg>
-          </span>
-          <span class="ss-gift-text">
-            <span class="ss-kicker">Only for the early list</span>
-            <span class="ss-gift-line">An extra discount and a gift from Saathi Store on your first order</span>
-          </span>
-        </div>
-
-        <div class="ss-join" id="join-box">
-          <button type="button" class="ss-cta" id="join">Claim my early list gift</button>
-          <span class="ss-note">One tap. We will email you the morning it opens.</span>
-          <p class="err" id="waitlist-err" role="alert" hidden></p>
-        </div>
-        <div class="ss-joined" id="joined" role="status" hidden>
-          <span class="ss-joined-dot" aria-hidden="true"></span>
-          <span class="ss-joined-text">
-            <span class="ss-joined-title">You are on the list</span>
-            <span class="ss-joined-line">Your extra discount and gift are saved. We will email you the morning Saathi Store opens.</span>
-          </span>
-        </div>
-      </div>
+    <!-- Step 4: the end of the flow. -->
+    <section id="step4" class="step card" aria-labelledby="tp-end" hidden>
+      <h1 id="tp-end"></h1>
+      <p class="lede" id="end-note" hidden></p>
+      <a class="tp-btn" id="end-get" href="https://saathi.dtitglobal.com/get"></a>
     </section>
   </main>
 
@@ -285,6 +280,14 @@
 <script>
   // Follow-up page behind the personal link in our thank-you messages. The token in ?t= is the
   // only credential, so it is lifted out of the address bar straight away and never logged.
+  //
+  // FOUR STEPS, one card at a time: the reaction, then either the store ask (4 and 5) or the
+  // improve box (2 and 3), then the Saathi Store early list, then a closing card.
+  //
+  // BACKWARD COMPATIBLE with the API that is live today. Only three calls can hold a step up,
+  // and all three already exist: /t/feedback, /t/waitlist and /t/:token/store. The funnel
+  // events go to /t/event, which is fire and forget: an API that does not have that route, or
+  // does not know an event name yet, answers 404 or { ok: false } and the page carries on.
   (function () {
     // Saathi Store photos (Shopify CDN), left to right on the gold thread.
     var STORE_BEADS = {
@@ -293,34 +296,107 @@
       'bead-place': 'https://cdn.shopify.com/s/files/1/0846/1805/1837/files/ss-pyrite-shree-yantra-frame-image1-hero.jpg?v=1793024847&width=160',
       'bead-light': 'https://cdn.shopify.com/s/files/1/0846/1805/1837/files/ss-crystal-tealight-holder-image1-hero.jpg?v=1793024711&width=160'
     };
-    var RATING_WORDS = ['', 'Not good', 'Could be better', 'Okay', 'Good', 'Loved it'];
     var TOKEN_RE = /^(s\.)?[A-Za-z0-9_-]{22}$/;
     var STORAGE_KEY = 'saathi.thanks.t';
-    var ERROR_TEXT = 'Something went wrong, please try again.';
+
+    // The four reactions, left to right, with the rating each one saves.
+    var REACTIONS = [
+      { rating: 5, emoji: '😍', key: 'r5' },
+      { rating: 4, emoji: '🙂', key: 'r4' },
+      { rating: 3, emoji: '😐', key: 'r3' },
+      { rating: 2, emoji: '😞', key: 'r2' }
+    ];
+
+    // Product copy. English by default, Hindi when the link says &l=hi or the browser is set
+    // to Hindi. The Saathi Store card keeps its own copy, as it is.
+    var COPY = {
+      en: {
+        q: 'How do you feel about Saathi so far?',
+        r5: 'Love it', r4: 'It is good', r3: 'It is okay', r2: 'Not for me',
+        highH: 'So glad Saathi is helping you!',
+        highP: 'Would you rate us on the store? It really helps others find Saathi.',
+        storePlay: 'Rate Saathi on Google Play',
+        storeApple: 'Rate Saathi on the App Store',
+        storeHint: 'Not opening? Tap the three dots and choose Open in Safari.',
+        later: 'Maybe later',
+        lowH: 'Thank you for being honest.',
+        lowP: 'How can we make Saathi better for you?',
+        improveLabel: 'Your note comes straight to our small team.',
+        placeholder: 'Tell us what felt off, or what you wish Saathi did',
+        send: 'Send',
+        skip: 'Skip',
+        noThanks: 'No thanks',
+        endH: 'Thank you! 🙏',
+        endJoined: 'You are on the list. We will email you the morning Saathi Store opens.',
+        get: 'Get Saathi',
+        err: 'Something went wrong, please try again.',
+        retry: 'Try again'
+      },
+      hi: {
+        q: 'Saathi aapko kaisa lag raha hai?',
+        r5: 'Bahut pasand hai', r4: 'Achha hai', r3: 'Theek hai', r2: 'Pasand nahi aaya',
+        highH: 'Bahut khushi hui ki Saathi aapke kaam aa raha hai!',
+        highP: 'Kya aap store par rating denge? Isse aur logon ko Saathi milta hai.',
+        storePlay: 'Saathi ko Google Play par rating dein',
+        storeApple: 'Saathi ko App Store par rating dein',
+        storeHint: 'Nahi khul raha? Teen dot dabayein aur Open in Safari chunein.',
+        later: 'Baad mein',
+        lowH: 'Sach batane ke liye dhanyavaad.',
+        lowP: 'Hum Saathi ko aapke liye aur behtar kaise banayein?',
+        improveLabel: 'Aapki baat seedhe hamari chhoti team tak jaati hai.',
+        placeholder: 'Bataiye kya theek nahi laga, ya aap Saathi se kya chahte hain',
+        send: 'Bhejein',
+        skip: 'Chhodein',
+        noThanks: 'Nahi, dhanyavaad',
+        endH: 'Dhanyavaad! 🙏',
+        endJoined: 'Aap list mein hain. Saathi Store khulne ki subah hum aapko email karenge.',
+        get: 'Saathi download karein',
+        err: 'Kuch galat ho gaya, kripya phir koshish karein.',
+        retry: 'Phir koshish karein'
+      }
+    };
+
+    function $(id) { return document.getElementById(id); }
+    function each(list, fn) { for (var i = 0; i < list.length; i++) fn(list[i], i); }
+    function param(name) {
+      try { return new URLSearchParams(location.search).get(name); } catch (e) { return null; }
+    }
 
     // Tokens minted by staging carry an "s." prefix.
     function apiBaseFor(token) {
       return token.indexOf('s.') === 0 ? 'https://staging.dtitglobal.com' : 'https://api.dtitglobal.com';
     }
 
-    function $(id) { return document.getElementById(id); }
-    function each(list, fn) { for (var i = 0; i < list.length; i++) fn(list[i]); }
+    /** 'hi' when the link says &l=hi, else when the browser's language starts with "hi". */
+    function readLang() {
+      var fromUrl = param('l');
+      if (fromUrl === 'hi') return 'hi';
+      if (fromUrl === 'en') return 'en';
+      var nav = String(navigator.language || '').toLowerCase();
+      return nav.indexOf('hi') === 0 ? 'hi' : 'en';
+    }
 
+    // Kept in BOTH stores: sessionStorage for this tab, and localStorage so a reload, a second
+    // tap on the link or coming back later still has the token after ?t= has been stripped.
     function readToken() {
-      var fromUrl = null;
-      try { fromUrl = new URLSearchParams(location.search).get('t'); } catch (e) {}
+      var fromUrl = param('t');
 
       if (fromUrl === null) {
         var stored = null;
         try { stored = sessionStorage.getItem(STORAGE_KEY); } catch (e) {}
+        if (!(stored && TOKEN_RE.test(stored))) {
+          try { stored = localStorage.getItem(STORAGE_KEY); } catch (e) {}
+        }
         return stored && TOKEN_RE.test(stored) ? stored : null;
       }
 
       var valid = TOKEN_RE.test(fromUrl);
       if (valid) {
         try { sessionStorage.setItem(STORAGE_KEY, fromUrl); } catch (e) {}
+        try { localStorage.setItem(STORAGE_KEY, fromUrl); } catch (e) {}
       }
-      // Drop ?t= so the link is not passed on by copy-paste or a screenshot.
+      // Drop ?t= so the link is not passed on by copy-paste or a screenshot. &l= stays, so a
+      // reload keeps the language.
       try {
         var params = new URLSearchParams(location.search);
         params.delete('t');
@@ -329,6 +405,10 @@
       } catch (e) {}
       return valid ? fromUrl : null;
     }
+
+    var lang = readLang();
+    var t = COPY[lang];
+    if (lang === 'hi') document.documentElement.lang = 'hi-Latn';
 
     var token = readToken();
     if (!token) return;
@@ -349,8 +429,19 @@
       });
     }
 
-    function showError(el) { el.textContent = ERROR_TEXT; el.hidden = false; }
-    function clearError(el) { el.textContent = ''; el.hidden = true; }
+    /**
+     * A funnel event. It never holds a step up and never shows an error: on an API without
+     * /t/event it simply fails, and the page goes on exactly as it would have.
+     */
+    function track(event, value) {
+      var body = { t: token, event: event };
+      if (value !== undefined) body.value = value;
+      try { post('/t/event', body, true).catch(function () {}); } catch (e) {}
+    }
+
+    function showError(el) { if (el) { el.textContent = t.err; el.hidden = false; } }
+    function clearError(el) { if (el) { el.textContent = ''; el.hidden = true; } }
+    function text(id, value) { $(id).textContent = value; }
 
     try { post('/t/open', { t: token }, true).catch(function () {}); } catch (e) {}
 
@@ -358,94 +449,176 @@
     // screen is an iPad.
     var ua = navigator.userAgent || '';
     var isIos = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && (navigator.maxTouchPoints || 0) > 1);
+    var isAndroid = /Android/i.test(ua);
     var inApp = isIos && /Instagram|FBAN|FBAV|WhatsApp|Line\/|LinkedInApp/.test(ua);
+    // Anything that is not an iPhone, an iPad or an Android device gets both store buttons.
+    var bothStores = !isIos && !isAndroid;
 
-    // The API picks App Store, Play or /get from the user agent; the label follows the same split.
-    var storeUrl = base + '/t/' + encodeURIComponent(token) + '/store';
-    each(document.querySelectorAll('.store-link'), function (a) { a.href = storeUrl; });
-    each(document.querySelectorAll('.store-name'), function (s) {
-      s.textContent = isIos ? 'the App Store' : 'Google Play';
-    });
-    // Some in-app browsers block the App Store hand-off entirely.
-    $('store-hint').hidden = !inApp;
+    // ── Copy into the page ──────────────────────────────────────────────────
+    text('tp-q', t.q);
+    text('tp-high', t.highH);
+    text('high-lede', t.highP);
+    text('store-later', t.later);
+    text('tp-low', t.lowH);
+    text('low-lede', t.lowP);
+    text('improve-label', t.improveLabel);
+    text('improve-send', t.send);
+    text('improve-skip', t.skip);
+    text('waitlist-no', t.noThanks);
+    text('tp-end', t.endH);
+    text('end-get', t.get);
+    text('store-hint', t.storeHint);
+    $('tp-improve').setAttribute('placeholder', t.placeholder);
+    each(document.querySelectorAll('.rate-retry'), function (b) { b.textContent = t.retry; });
 
     for (var id in STORE_BEADS) $(id).src = STORE_BEADS[id];
 
-    $('plain').hidden = true;
-    $('rate').hidden = false;
-    $('waitlist').hidden = false;
+    // The reaction buttons. Only our own copy goes in here, never anything from the API.
+    var reactionsHtml = '';
+    each(REACTIONS, function (r, i) {
+      reactionsHtml +=
+        '<button type="button" class="react" data-i="' + i + '">' +
+        '<span class="emo" aria-hidden="true">' + r.emoji + '</span>' +
+        '<span class="lbl">' + t[r.key] + '</span></button>';
+    });
+    $('reactions').innerHTML = reactionsHtml;
+    $('reactions').setAttribute('aria-label', t.q);
 
-    // ----- rating -----
-    var stars = $('stars').querySelectorAll('.tp-star');
-    var rateErr = $('rate-err');
+    // The store buttons. The href is the API's click route, which records the click and then
+    // redirects to the right store; &p= tells it which store when the browser is not a phone.
+    var storeUrl = base + '/t/' + encodeURIComponent(token) + '/store';
+    var star = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.5l6.1-.7L12 3.2z"/></svg>';
+    function storeButton(label, platform) {
+      return '<a class="tp-btn store-link" href="' + storeUrl + (platform ? '?p=' + platform : '') + '">' +
+        star + '<span>' + label + '</span></a>';
+    }
+    $('store-buttons').innerHTML = bothStores
+      ? storeButton(t.storePlay, 'android') + storeButton(t.storeApple, 'ios')
+      : storeButton(isIos ? t.storeApple : t.storePlay, '');
+    // Some in-app browsers block the App Store hand-off entirely.
+    $('store-hint').hidden = !inApp;
+
+    // ── Steps ───────────────────────────────────────────────────────────────
+    var STEPS = ['step1', 'step2a', 'step2b', 'step3', 'step4'];
+    var DOT_OF = { step1: 0, step2a: 1, step2b: 1, step3: 2, step4: 2 };
+    var FADE_MS = 180;
+    var reduced = false;
+    try { reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+
+    var dots = $('dots').querySelectorAll('span');
+    var current = null;
+
+    function go(id) {
+      if (current === id) return;
+      var previous = current ? $(current) : null;
+      function paint() {
+        each(STEPS, function (name) {
+          var el = $(name);
+          el.hidden = name !== id;
+          if (name !== id) el.classList.remove('in');
+        });
+        current = id;
+        each(dots, function (dot, i) { dot.classList.toggle('on', i <= DOT_OF[id]); });
+        try { window.scrollTo(0, 0); } catch (e) {}
+        if (reduced) { $(id).classList.add('in'); return; }
+        requestAnimationFrame(function () { $(id).classList.add('in'); });
+      }
+      if (previous && !reduced) {
+        previous.classList.remove('in');
+        setTimeout(paint, FADE_MS);
+      } else {
+        paint();
+      }
+    }
+
+    $('plain').hidden = true;
+    $('dots').hidden = false;
+    go('step1');
+
+    // ── Step 1: the reaction ────────────────────────────────────────────────
+    // The rating is saved on the tap and the page moves on straight away. If the save fails,
+    // the next card carries the message and a Try again, so nothing is lost quietly.
+    var lastRating = null;
     var ratingSeq = 0;
 
-    function showRating(rating) {
-      each(stars, function (star) {
-        var value = Number(star.getAttribute('data-rating'));
-        star.classList.toggle('on', value <= rating);
-        star.setAttribute('aria-pressed', value === rating ? 'true' : 'false');
-      });
-      $('word').textContent = RATING_WORDS[rating] + ' · tap another star to change it';
-      $('word').hidden = false;
-      $('high').hidden = rating < 4;
-      $('low').hidden = rating >= 4;
-      // A new rating opens the note box again.
-      $('sent').hidden = true;
-      each(document.querySelectorAll('.box'), function (box) { box.hidden = false; });
-    }
-
-    function onStar(rating) {
-      showRating(rating);
-      clearError(rateErr);
-      // Only the latest tap may report a failure, so a slow earlier request cannot flag a newer one.
+    function saveRating(rating) {
+      lastRating = rating;
+      each(document.querySelectorAll('.rate-err'), clearError);
+      each(document.querySelectorAll('.rate-retry'), function (b) { b.hidden = true; });
+      // Only the latest attempt may report a failure, so a slow earlier request cannot flag it.
       var seq = ++ratingSeq;
       post('/t/feedback', { t: token, rating: rating }).catch(function () {
-        if (seq === ratingSeq) showError(rateErr);
+        if (seq !== ratingSeq) return;
+        each(document.querySelectorAll('.rate-err'), showError);
+        each(document.querySelectorAll('.rate-retry'), function (b) { b.hidden = false; });
       });
     }
 
-    each(stars, function (star) {
-      star.addEventListener('click', function () {
-        onStar(Number(star.getAttribute('data-rating')));
+    each($('reactions').querySelectorAll('.react'), function (button) {
+      button.addEventListener('click', function () {
+        var r = REACTIONS[Number(button.getAttribute('data-i'))];
+        if (!r) return;
+        saveRating(r.rating);
+        track('reaction_picked', r.rating);
+        go(r.rating >= 4 ? 'step2a' : 'step2b');
       });
     });
 
-    // ----- improve box (one in each branch, same call) -----
-    each(document.querySelectorAll('.box'), function (box) {
-      var textarea = box.querySelector('textarea');
-      var sendBtn = box.querySelector('.send');
-      var boxErr = box.querySelector('.err');
-      sendBtn.addEventListener('click', function () {
-        var comment = textarea.value.trim();
-        if (!comment) return;
-        clearError(boxErr);
-        sendBtn.disabled = true;
-        post('/t/feedback', { t: token, comment: comment }).then(function () {
-          sendBtn.disabled = false;
-          textarea.value = '';
-          each(document.querySelectorAll('.box'), function (b) { b.hidden = true; });
-          $('sent').hidden = false;
-        }).catch(function () {
-          sendBtn.disabled = false;
-          showError(boxErr);
-        });
-      });
+    each(document.querySelectorAll('.rate-retry'), function (button) {
+      button.addEventListener('click', function () { if (lastRating !== null) saveRating(lastRating); });
     });
 
-    // ----- Saathi Store early list -----
+    // ── Step 2a: the store ask ──────────────────────────────────────────────
+    // The store link navigates away, so step 3 is put up first: coming back lands there.
+    each(document.querySelectorAll('.store-link'), function (a) {
+      a.addEventListener('click', function () { go('step3'); });
+    });
+    $('store-later').addEventListener('click', function () {
+      track('store_later');
+      go('step3');
+    });
+
+    // ── Step 2b: the improve box ────────────────────────────────────────────
+    // The comment goes to the SAME feedback row as the rating; neither overwrites the other.
+    var improveSend = $('improve-send');
+    var improveErr = $('improve-err');
+    improveSend.addEventListener('click', function () {
+      var comment = $('tp-improve').value.trim();
+      if (!comment) return;
+      clearError(improveErr);
+      improveSend.disabled = true;
+      post('/t/feedback', { t: token, comment: comment }).then(function () {
+        improveSend.disabled = false;
+        track('improve_sent');
+        go('step3');
+      }).catch(function () {
+        improveSend.disabled = false;
+        showError(improveErr);
+      });
+    });
+    $('improve-skip').addEventListener('click', function () {
+      track('improve_skipped');
+      go('step3');
+    });
+
+    // ── Step 3: the Saathi Store early list ─────────────────────────────────
     var joinBtn = $('join');
     var waitlistErr = $('waitlist-err');
     joinBtn.addEventListener('click', function () {
       clearError(waitlistErr);
       joinBtn.disabled = true;
       post('/t/waitlist', { t: token }).then(function () {
-        $('join-box').hidden = true;
-        $('joined').hidden = false;
+        $('end-note').textContent = t.endJoined;
+        $('end-note').hidden = false;
+        go('step4');
       }).catch(function () {
         joinBtn.disabled = false;
         showError(waitlistErr);
       });
+    });
+    $('waitlist-no').addEventListener('click', function () {
+      track('waitlist_declined');
+      go('step4');
     });
   })();
 </script>
